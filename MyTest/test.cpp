@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-20 16:32:30
+ * @LastEditTime: 2023-04-21 17:21:48
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -16,5 +16,11 @@ using namespace std;
 
 int main()
 {
-    
+    MyMesh mesh;
+    string filename = "AirBoat.obj";
+    string filename2 = "AirBoat_output.obj";
+    int loadmask;
+    Read(mesh , filename , loadmask);
+    Info(mesh);
+    Write(mesh , filename2 , loadmask);
 }

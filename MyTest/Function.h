@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:44:18
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-20 19:52:30
+ * @LastEditTime: 2023-04-20 20:59:46
  * @FilePath: \MeshTest\MyTest\Function.h
  * @Description: 
  * 
@@ -18,16 +18,11 @@
 
 using namespace std;
 
-class Read
-{
-    Read();
-    Read(string s);
-};
 
-class Write
-{
-    Write();
-    Write(string s);
-};
+void Read(MyMesh &mesh, string s, int &loadmask);
+
+void Write(MyMesh &mesh, string s, int &loadmask);
+
+void Info(MyMesh &mesh);
 
 #endif // FUNCTION_H

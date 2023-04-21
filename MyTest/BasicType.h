@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:33:00
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-20 19:58:12
+ * @LastEditTime: 2023-04-21 15:14:25
  * @FilePath: \MeshTest\MyTest\BasicType.h
  * @Description: 
  * 
@@ -29,7 +29,7 @@ struct MyTriangleTypes : public vcg::UsedTypes<
         vcg::Use<MyFace>::AsFaceType>{
 };
 
-class MyVertex : public vcg::Vertex <MyTriangleTypes , vcg::vertex::Coord3d >
+class MyVertex : public vcg::Vertex <MyTriangleTypes , vcg::vertex::Coord3d>
 {
 };
 

@@ -233,7 +233,7 @@ public:
       stream.close();
       return E_CANTOPEN;
     }
-    
+
     typename OpenMeshType::template PerMeshAttributeHandle<std::vector<Material> > materialsHandle =
         vcg::tri::Allocator<OpenMeshType>:: template GetPerMeshAttribute<std::vector<Material> >(m, std::string("materialVector"));
     typename OpenMeshType::template PerFaceAttributeHandle<int> mIndHandle =
@@ -683,7 +683,7 @@ public:
           m.face[i].WT(j).n() = indexedFaces[i].tInd;
         }
         if (((oi.mask & vcg::tri::io::Mask::IOM_VERTTEXCOORD) != 0 ) && HasPerVertexTexCoord(m))
-		{
+		    {
           ObjTexCoord t = texCoords[indexedFaces[i].t[j]];
           m.face[i].V(j)->T().u() = t.u;
           m.face[i].V(j)->T().v() = t.v;
@@ -700,12 +700,12 @@ public:
         }
         
         // set faux edge flags according to internals faces
-        if (indexedFaces[i].edge[j]) 
-          m.face[i].SetF(j);
-        else 
-          m.face[i].ClearF(j);
+        // if (indexedFaces[i].edge[j]) 
+        //   m.face[i].SetF(j);
+        // else
+        //   m.face[i].ClearF(j);
       }
-      
+
       if (HasPerFaceNormal(m))
       {
         if (((oi.mask & vcg::tri::io::Mask::IOM_FACECOLOR) != 0) && (HasPerFaceColor(m)))

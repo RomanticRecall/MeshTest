@@ -70,7 +70,7 @@ public:
   const TexCoordType &cWT(const int) const { static TexCoordType dummy_texture; return dummy_texture;}
 
   typedef int FlagType;
-  int &Flags() { static int dummyflags(0);  assert(0); return dummyflags; }
+  int &Flags() { static int dummyflags(0); assert(0); return dummyflags; }
   int  Flags() const { return 0; }
   int cFlags() const { return 0; }
   static bool HasFlags()   { return false; }
