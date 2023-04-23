@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-22 20:17:56
+ * @LastEditTime: 2023-04-23 15:25:22
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -23,7 +23,6 @@ int main()
     int loadmask;
     Read(mesh , filename , loadmask);
     Info(mesh);
-    MyMethod<MyMesh>::MyUnifrom(mesh , 40);
-    Info(mesh);
+    MyMethod<MyMesh>::MyUnifrom(mesh , 10);
     Write(mesh , filename2 , loadmask);
 }

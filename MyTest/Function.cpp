@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 20:00:58
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-22 22:18:25
+ * @LastEditTime: 2023-04-23 12:55:44
  * @FilePath: \MeshTest\MyTest\Function.cpp
  * @Description: 
  * 
@@ -12,14 +12,24 @@
 
 void Read(MyMesh &mesh, string s , int &loadmask){
     vcg::tri::io::ImporterOBJ<MyMesh>::Open(mesh, s.c_str(), loadmask);
-    vcg::tri::UpdateFlags<MyMesh>::VertexSetV(mesh);
-    vcg::tri::UpdateSelection<MyMesh> updslc;
     vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
     vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
 }
 
-void Write(MyMesh &mesh, string s , int &loadmask){
+void Write(MyMesh &mesh , string s , int &loadmask){
     vcg::tri::io::ExporterOBJ<MyMesh>::Save(mesh, s.c_str() , loadmask);
+}
+
+//for test
+void MyWriteOBJ(MyMesh &mesh , string s)
+{
+    std::map<MyVertex *,int> VtoI;
+    std::ofstream ofs;
+    ofs.open(s.c_str() , std::ios::out);
+    for(int i = 0;i < mesh.vn;i ++){
+        VtoI[ &mesh.vert[i] ] = i;
+        ofs << "v " << mesh.vert[i].P().X() << " " << mesh.vert[i].P().Y() << " " << mesh.vert[i].P().Z() << "\n";
+    }
 }
 
 void Info(MyMesh &mesh)

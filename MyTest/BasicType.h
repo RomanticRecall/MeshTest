@@ -31,12 +31,14 @@ struct MyTriangleTypes : public vcg::UsedTypes<
 
 class MyVertex : public vcg::Vertex <MyTriangleTypes , 
                         vcg::vertex::Coord3d , 
+                        vcg::vertex::BitFlags ,
                         vcg::vertex::VFAdj>
 {
 };
 
 class MyFace : public vcg::Face <MyTriangleTypes , 
                       vcg::face::VertexRef , 
+                      vcg::vertex::BitFlags ,
                       vcg::face::FFAdj ,
                       vcg::face::VFAdj>
 {

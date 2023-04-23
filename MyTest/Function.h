@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:44:18
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-22 22:11:32
+ * @LastEditTime: 2023-04-23 14:58:09
  * @FilePath: \MeshTest\MyTest\Function.h
  * @Description: 
  * 
@@ -25,6 +25,8 @@ using namespace std;
 void Read(MyMesh &mesh, string s, int &loadmask);
 
 void Write(MyMesh &mesh, string s, int &loadmask);
+
+void MyWriteOBJ(MyMesh &mesh , string s);
 
 void Info(MyMesh &mesh);
 
