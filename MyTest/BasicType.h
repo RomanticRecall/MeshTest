@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:33:00
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-22 22:11:15
+ * @LastEditTime: 2023-05-30 14:42:06
  * @FilePath: \MeshTest\MyTest\BasicType.h
  * @Description: 
  * 
@@ -34,6 +34,45 @@ class MyVertex : public vcg::Vertex <MyTriangleTypes ,
                         vcg::vertex::BitFlags ,
                         vcg::vertex::VFAdj>
 {
+        public:
+        MyVertex operator+(MyVertex const& v) const
+        {
+                MyVertex now;
+                now.P() = this->P() + v.P();
+                return now;
+        }
+
+        MyVertex operator-(MyVertex const& v) const
+        {
+                MyVertex now;
+                now.P() = this->P() - v.P();
+                return now;
+        }
+
+        MyVertex operator*(double const& s) const
+        {
+                MyVertex now;
+                now.P() = this->P() * s;
+                return now;
+        }
+
+        MyVertex operator/(double const& s) const
+        {
+                MyVertex now;
+                now.P() = this->P() / s;
+                return now;
+        }
+
+        double operator*(MyVertex const& v) const
+        {
+                return this->P() * v.P();
+        }
+
+        bool operator==(MyVertex const& v) const
+        {
+                return this->P() == v.P();
+        }
+
 };
 
 class MyFace : public vcg::Face <MyTriangleTypes , 

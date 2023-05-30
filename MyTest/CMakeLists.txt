@@ -7,4 +7,5 @@ add_executable(
     MeshTest
     test.cpp
     Function.cpp
+    Dissection.cpp
 )
