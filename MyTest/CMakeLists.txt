@@ -8,4 +8,5 @@ add_executable(
     test.cpp
     Function.cpp
     Dissection.cpp
+    Convertcases.cpp
 )

@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-05-29 17:03:19
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-05-30 16:36:57
+ * @LastEditTime: 2023-05-31 19:23:16
  * @FilePath: \MeshTest\MyTest\Dissection.cpp
  * @Description: 
  * 
@@ -17,6 +17,7 @@ Dissection::Dissection(std::vector<MyVertex>& poly)
      ShellPnts.clear();
      for(int i = 0; i < poly.size();i ++)
      ShellPnts.push_back(poly[i]);
+     record(poly);
 }
 
 Dissection::~Dissection(){}
@@ -415,13 +416,37 @@ void Dissection::close(vector<MyVertex>& temp)
      temp.push_back(temp[0]);
 }
 
+void Dissection::record(vector<MyVertex> external)
+{
+     MyMesh mesh;
+     vcg::tri::Allocator<MyMesh>::AddVertices(mesh, external.size() - 1);
+     vcg::tri::Allocator<MyMesh>::AddEdges(mesh, external.size() - 1);
+     for(int i = 0;i < external.size() - 1;i ++)
+     mesh.vert[i] = external[i];
+     for(int i = 0;i < external.size() - 1;i ++)
+     {
+          mesh.edge[i].V(0) = &mesh.vert[i];
+          mesh.edge[i].V(1) = &mesh.vert[i + 1];
+     }
+     mesh.UpdateDataStructure();
+     MyWriteOBJ(mesh, "output.obj");
+}
+
 std::vector< std::vector<MyVertex> > Dissection::Result()
 {
      preprocess();
-     derepeat();
+     derepeat(); 
      if(ShellPnts.size() == 0)
      return res;
      interpolate();
      // rec_split();
+     vector<MyVertex> rec;
+     for(int i = 0;i < res.size();i ++)
+     {
+          close(res[i]);
+          for(int j = 0;j < res[i].size();j ++)
+          rec.push_back(res[i][j]);
+     }
+     record(rec);
      return res;
 }

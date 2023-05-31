@@ -12,6 +12,7 @@
 #define DISSECTION_HEAD
 
 #include "BasicType.h"
+#include "Function.h"
 
 class Dissection
 {

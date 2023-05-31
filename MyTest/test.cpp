@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-05-30 16:39:38
+ * @LastEditTime: 2023-05-31 18:39:40
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -11,6 +11,7 @@
 #include <iostream>
 #include "BasicType.h"
 #include "Dissection.h"
+#include "Convertcases.h"
 #include "Function.h"
 #include "MyMethod.h"
 
@@ -18,11 +19,15 @@ using namespace std;
 
 int main()
 {
+
     vector<MyVertex> input;
     vector<vector<MyVertex>> output;
+    Convertcases cvtcs;
+    cvtcs.read( input , "ARC_path_bug1035.txt" );
     Dissection disc(input);
     output = disc.Result();
     cout << "we split out " << output.size() << " shapes" << endl;
+
     // MyMesh mesh;
     // string filename = "groud.obj";
     // string filename2 = "groud_output.obj";
@@ -31,4 +36,5 @@ int main()
     // Info(mesh);
     // MyMethod<MyMesh>::MyUnifrom(mesh , 10);
     // Write(mesh , filename2 , loadmask);
+
 }
