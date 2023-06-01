@@ -9,4 +9,5 @@ add_executable(
     Function.cpp
     Dissection.cpp
     Convertcases.cpp
+    ../vcglib/wrap/ply/plylib.cpp
 )

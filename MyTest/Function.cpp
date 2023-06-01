@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 20:00:58
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-04-23 12:55:44
+ * @LastEditTime: 2023-06-01 15:37:14
  * @FilePath: \MeshTest\MyTest\Function.cpp
  * @Description: 
  * 
@@ -10,14 +10,21 @@
  */
 #include "Function.h"
 
-void Read(MyMesh &mesh, string s , int &loadmask){
+void ReadOBJ(MyMesh &mesh, string s , int &loadmask){
     vcg::tri::io::ImporterOBJ<MyMesh>::Open(mesh, s.c_str(), loadmask);
     vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
     vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
 }
 
-void Write(MyMesh &mesh , string s , int &loadmask){
+void WriteOBJ(MyMesh &mesh , string s , int &loadmask){
     vcg::tri::io::ExporterOBJ<MyMesh>::Save(mesh, s.c_str() , loadmask);
+}
+
+void WritePLY(MyMesh &mesh , string s){
+    // int mask = vcg::tri::io::ExporterPLY<MyMesh>::GetExportMaskCapability();
+    int mask = 0;
+    mask |= vcg::tri::io::Mask::IOM_EDGEINDEX;
+    vcg::tri::io::ExporterPLY<MyMesh>::Save(mesh, s.c_str() , mask);
 }
 
 //for test

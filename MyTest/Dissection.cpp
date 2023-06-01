@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-05-29 17:03:19
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-05-31 19:23:16
+ * @LastEditTime: 2023-06-01 20:21:54
  * @FilePath: \MeshTest\MyTest\Dissection.cpp
  * @Description: 
  * 
@@ -17,7 +17,7 @@ Dissection::Dissection(std::vector<MyVertex>& poly)
      ShellPnts.clear();
      for(int i = 0; i < poly.size();i ++)
      ShellPnts.push_back(poly[i]);
-     record(poly);
+     record(poly , "original.ply");
 }
 
 Dissection::~Dissection(){}
@@ -59,13 +59,15 @@ void Dissection::preprocess()
           theta += M_PI_2 * 3.0;
           while(theta >= M_PI * 2.0)
           theta -= M_PI * 2.0;
-          temp.P().Construct<double>( cos(theta) , sin(theta) , 0.0 );
-          normal.push_back(temp);
+          temp.P() = vcg::Point3d::Construct<double>( cos(theta) , sin(theta) , 0.0 );
+          normal.push_back( temp );
      }
 }
 
 void Dissection::derepeat()
 {
+     for(int i = 0;i < normal.size();i++)
+     cout << normal[i].P().X() << " " << normal[i].P().Y() << " " << endl;
      for(int i = 1;i < normal.size();i ++)
      {
           if(normal[i] == normal[i - 1] || normal[i] == normal[i - 1] * (-1.0) )
@@ -152,6 +154,100 @@ bool Dissection::oppo(int n1,int n2)
      
 }
 
+bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
+{
+     double dx,dy,theta1,theta2,k1,k2;
+     dx = v2.P().X() - v1.P().X();
+     dy = v2.P().Y() - v1.P().Y();
+
+     if(dy < EPSIL && dy > (-1.0) * EPSIL)
+     {
+          if(dx > 0)
+          theta1 = 0.0;
+          else
+          theta1 = M_PI;
+     }
+     else
+     {
+          if(dx < EPSIL && dx > (-1.0) * EPSIL)
+          {
+               if(dy > EPSIL)
+               theta1 = M_PI_2;
+               else
+               theta1 = M_PI_2 * 3.0;
+          }
+          else if(dx > EPSIL)
+          theta1 = atan(dy/dx);
+          else
+          theta1 = atan(dy/dx) + M_PI;
+     }
+     
+     if(!clockwise())
+     theta1 += M_PI_2;
+     else
+     theta1 += 3.0 * M_PI_2;
+     
+     while(theta1 >= 2.0 * M_PI)
+     theta1 -= 2.0 * M_PI;
+     dx = v4.P().X() - v3.P().X();
+     dy = v4.P().Y() - v3.P().Y(); 
+     if(dy < EPSIL && dy > (-1.0) * EPSIL)
+     {
+          if(dx > 0)
+          theta2 = 0.0;
+          else
+          theta2 = M_PI;
+     }
+     else
+     {
+          if(dx < EPSIL && dx > (-1.0) * EPSIL)
+          {
+               if(dy > EPSIL)
+               theta2 = M_PI_2;
+               else
+               theta2 = M_PI_2 * 3.0;
+          }
+          else if(dx > EPSIL)
+          theta2 = atan(dy/dx);
+          else
+          theta2 = atan(dy/dx) + M_PI;
+     }
+     if(!clockwise())
+     theta2 += M_PI_2;
+     else
+     theta2 += 3.0 * M_PI_2;
+     while(theta2 >= 2.0 * M_PI)
+     theta2 -= 2.0 * M_PI;
+     MyVertex d1,d2;
+
+     d1.P() = vcg::Point3d::Construct<double>( cos(theta1) , sin(theta1) , 0.0 );
+     d2.P() = vcg::Point3d::Construct<double>( cos(theta2) , sin(theta2) , 0.0 );
+     if( !equal( d1.P().X(),d2.P().Y() * (-1.0) ) && !equal( d1.P().Y() ,d2.P().Y() * (-1.0) ) )
+     return false;
+     if(d1.P().Y() < EPSIL && d1.P().Y() > (-1.0) * EPSIL && d2.P().Y() < EPSIL && d2.P().Y() > (-1.0) * EPSIL)
+     {
+          if(v1.P().X() < v3.P().X() && d1.P().X() > EPSIL && d2.P().X() < (-1.0) * EPSIL)
+          return true;
+          else if(v1.P().X() > v3.P().X() && d1.P().X() < (-1.0) * EPSIL && d2.P().X() > EPSIL)
+          return true;
+          return false;
+     }
+     
+     double x1,x2,y1,y2,k,yb1,yb2;
+     k = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
+        x1 = v1.P().X();
+        y1 = v1.P().Y();
+        x2 = v3.P().X();
+        y2 = v3.P().Y();
+        yb1 = y1 - k * x1;
+        yb2 = y2 - k * x2;
+        if(yb1 > yb2 && d1.P().Y() < (-1.0) * EPSIL && d2.P().Y() > EPSIL)
+        return true;
+        if(yb1 < yb2 && d1.P().Y() > EPSIL && d2.P().Y() < (-1.0) * EPSIL)
+        return true;
+        return false;
+}
+
 bool Dissection::interleave(int n1,int n2)
 {
      double k1,k2,x1,x2,y1,y2,x,y;
@@ -213,19 +309,64 @@ bool Dissection::equal(double d1,double d2)
      return true;
 }
 
-double Dissection::parallel_distant(MyVertex p1,MyVertex p2,MyVertex p3,MyVertex p4)
+bool Dissection::isRectangle(MyVertex &v1,MyVertex &v2,MyVertex &v3,MyVertex &v4)
 {
-     if(p2.P().X() - p1.P().X() < EPSIL && p2.P().X() - p1.P().X() > (-1.0) * EPSIL)
-     return p3.P().X() > p1.P().X() ? p3.P().X() - p1.P().X() : p1.P().X() - p3.P().X();
-     if(p2.P().Y() - p1.P().Y() < EPSIL && p2.P().Y() - p1.P().Y() > (-1.0) * EPSIL)
-     return p3.P().Y() > p1.P().Y() ? p3.P().Y() - p1.P().Y() : p1.P().Y() - p3.P().Y();
+     double k = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
+     double l1 = ( v2.P().Y() - v1.P().Y() ) * (v2.P().Y() - v1.P().Y()) + (v2.P().X() - v1.P().X()) * (v2.P().X() - v1.P().X());
+     double l2 = ( v4.P().Y() - v3.P().Y()) * (v4.P().Y() - v3.P().Y()) + (v4.P().X() - v3.P().X()) * (v4.P().X() - v3.P().X());
+
+     if(l1 < l2 - EPSIL || l1 > l2 + EPSIL)
+     return false;
+
+     double inner_conductor = (v2.P().X() - v1.P().X()) * (v4.P().X() - v1.P().X()) + (v2.P().Y() - v1.P().Y()) * (v4.P().Y() - v1.P().Y());
+
+     if(inner_conductor > EPSIL || inner_conductor < -EPSIL)
+     return false;
+
+     return true;
+}
+
+bool Dissection::intersection(MyVertex &v1,MyVertex &v2,vector<MyVertex>& temp)
+{
+     for(int i = 0; i < temp.size();i ++)
+     {
+          if( (temp[i] != v1 && temp[i + 1] != v2) && temp[i] != v2 && temp[i + 1] != v1 )
+          {
+               if(max(v1.P().X(),v2.P().X()) < min(temp[i].P().X(),temp[i + 1].P().X()))
+               continue;
+               if(max(v1.P().Y(),v2.P().Y()) < min(temp[i].P().Y(),temp[i + 1].P().Y()))
+               continue;
+               if(min(v1.P().X(),v2.P().X()) > max(temp[i].P().X(),temp[i + 1].P().X()))
+               continue;
+               if(min(v1.P().Y(),v2.P().Y()) > max(temp[i].P().Y(),temp[i + 1].P().Y()))
+               continue;
+               if( ( (temp[i].P().X() - v1.P().X()) * (temp[i].P().Y() - temp[i + 1].P().Y()) - 
+                    (temp[i].P().Y() - v1.P().Y()) * (temp[i].P().X() - temp[i + 1].P().X()) ) * 
+                    ( (temp[i].P().X() - v2.P().X()) * (temp[i].P().Y() - temp[i + 1].P().Y()) - 
+                    (temp[i].P().Y() - v2.P().Y()) * (temp[i].P().X() - temp[i + 1].P().X()) ) <= EPSIL &&
+                    ( (v1.P().X() - temp[i].P().X()) * (v1.P().Y() - v2.P().Y()) - 
+                    (v1.P().Y() - temp[i].P().Y()) * (v1.P().X() - v2.P().X()) ) * 
+                    ( (v1.P().X() - temp[i + 1].P().X()) * (v1.P().Y() - v2.P().Y()) - 
+                    (v1.P().Y() - temp[i + 1].P().Y()) * (v1.P().X() - v2.P().X()) ) <= EPSIL )
+               return true;
+          }
+     }
+     return false;
+}
+
+double Dissection::parallel_distant(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
+{
+     if(v2.P().X() - v1.P().X() < EPSIL && v2.P().X() - v1.P().X() > (-1.0) * EPSIL)
+     return v3.P().X() > v1.P().X() ? v3.P().X() - v1.P().X() : v1.P().X() - v3.P().X();
+     if(v2.P().Y() - v1.P().Y() < EPSIL && v2.P().Y() - v1.P().Y() > (-1.0) * EPSIL)
+     return v3.P().Y() > v1.P().Y() ? v3.P().Y() - v1.P().Y() : v1.P().Y() - v3.P().Y();
      double k1,k2,x1,x2,y1,y2,x,y;
-     k2 = ( p2.P().Y() - p1.P().Y() ) / ( p2.P().X() - p1.P().X() );
+     k2 = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
      k1 = (-1.0) / k2;
-     x1 = p2.P().X();
-     y1 = p2.P().Y();
-     x2 = p3.P().X();
-     y2 = p3.P().Y();
+     x1 = v2.P().X();
+     y1 = v2.P().Y();
+     x2 = v3.P().X();
+     y2 = v3.P().Y();
      x = (k1 * x1 - y1 - k2 * x2 + y2) / ( k1 - k2 );
      y = k2 * x - k2 * x1 + y1;
      return sqrt( (x - x1) * (x - x1) + (y - y1) * (y - y1) );
@@ -416,30 +557,136 @@ void Dissection::close(vector<MyVertex>& temp)
      temp.push_back(temp[0]);
 }
 
-void Dissection::record(vector<MyVertex> external)
+void Dissection::rec_split()
+{
+     std::stack<std::vector<MyVertex>> tool; 
+        tool.push(ShellPnts);
+        int cnt = 0;
+     while(!tool.empty())
+     {
+          double dist,min_dist;
+          int mark_i,mark_j;
+          bool jud = false;
+          std::vector<MyVertex> temp = tool.top(),now;
+          close(temp);
+          // derepeat(temp);
+          tool.pop();
+          for(int i = 0;i < temp.size();i ++)
+          {
+               for(int j = i + 2;j + 1 < temp.size();j ++)
+               {
+                    if( oppo(temp[i],temp[i + 1],temp[j],temp[j + 1]) && isRectangle(temp[i],temp[i + 1],temp[j],temp[j + 1]) &&  !intersection(temp[i],temp[j + 1],temp) && !intersection(temp[i + 1],temp[j],temp) )
+                    {
+                         dist = parallel_distant(temp[i],temp[i + 1],temp[j],temp[j + 1]);
+                         if(!jud)
+                         {
+                              min_dist = dist;
+                              mark_i = i;
+                              mark_j = j;
+                              jud = true;
+                         }
+                         else if(min_dist > dist)
+                         {
+                              min_dist = dist;
+                              mark_i = i;
+                              mark_j = j;
+                         }
+                    }
+               }
+
+               if(jud)
+               {
+                    cnt ++;
+                    now.clear();
+                    now.push_back(temp[mark_i]);
+                    now.push_back(temp[mark_i + 1]);
+                    now.push_back(temp[mark_j]);
+                    now.push_back(temp[mark_j + 1]);
+                    now.push_back(temp[mark_i]);
+                    res.push_back(now);
+                    types.push_back(0);
+                    now.clear();
+                    for(int j = 0;j < temp.size();j ++)
+                    {
+                        now.push_back(temp[j]);
+                        if(j == mark_i)
+                        j = mark_j;
+                    }
+                    tool.push(now);
+                    now.clear();
+                    now.push_back(temp[mark_j]);
+                    for(int j = mark_i + 1;j <= mark_j;j ++)
+                    now.push_back(temp[j]);
+                    tool.push(now);
+
+                    break;
+               }
+
+          }
+
+          if(!jud)
+          {
+               double k1,k2;
+               for(int i = 1;i < temp.size() - 1;i ++)
+               {
+                    k1 = ( temp[i].P().Y() - temp[i - 1].P().Y() ) / ( temp[i].P().X() - temp[i - 1].P().X() );
+                    k2 = ( temp[i + 1].P().Y() - temp[i].P().Y() ) / ( temp[i + 1].P().X() - temp[i].P().X() );
+                    if(temp[i] == temp[i - 1])
+                    {
+                         temp.erase(temp.begin() + i);
+                         i --;
+                    }
+                    else if( (temp[i].P().X() - temp[i - 1].P().X() == 0.00000 && temp[i + 1].P().X() - temp[i].P().X() == 0.00000) || ( k1 <= k2 + EPSIL && k1 >= k2 - EPSIL ) )
+                    {
+                         temp.erase(temp.begin() + i);
+                         i --;
+                    }
+               }
+               int len = temp.size();
+               k1 = ( temp[1].P().Y() - temp[0].P().Y() ) / ( temp[1].P().X() - temp[0].P().X() );
+               k2 = ( temp[len - 1].P().Y() - temp[len - 2].P().Y() ) / ( temp[len - 1].P().X() - temp[len - 2].P().X() );
+               if( ( temp[1].P().X() - temp[0].P().X() == 0.00000 && temp[len - 1].P().X() - temp[len - 2].P().X() == 0.00000 ) || ( k1 <= k2 + EPSIL && k1 >= k2 - EPSIL ) )
+               {
+                    temp.erase(temp.begin());
+                    temp[temp.size() - 1] = temp[0];
+               }
+               if(temp.size() > 3)
+               {
+                    res.push_back(temp);
+                    types.push_back(1);
+               }
+          }
+     }
+}
+
+void Dissection::record(vector<MyVertex> external , string s)
 {
      MyMesh mesh;
+     close(external);
      vcg::tri::Allocator<MyMesh>::AddVertices(mesh, external.size() - 1);
      vcg::tri::Allocator<MyMesh>::AddEdges(mesh, external.size() - 1);
      for(int i = 0;i < external.size() - 1;i ++)
      mesh.vert[i] = external[i];
-     for(int i = 0;i < external.size() - 1;i ++)
+     for(int i = 0;i < external.size() - 2;i ++)
      {
           mesh.edge[i].V(0) = &mesh.vert[i];
           mesh.edge[i].V(1) = &mesh.vert[i + 1];
      }
+     mesh.edge[external.size() - 2].V(0) = &mesh.vert[external.size() - 2];
+     mesh.edge[external.size() - 2].V(1) = &mesh.vert[0];
      mesh.UpdateDataStructure();
-     MyWriteOBJ(mesh, "output.obj");
+     WritePLY(mesh, s);
 }
 
 std::vector< std::vector<MyVertex> > Dissection::Result()
 {
      preprocess();
-     derepeat(); 
-     if(ShellPnts.size() == 0)
+     derepeat();
+     int len = ShellPnts.size();
+     if(len == 0)
      return res;
      interpolate();
-     // rec_split();
+     rec_split();
      vector<MyVertex> rec;
      for(int i = 0;i < res.size();i ++)
      {
@@ -447,6 +694,7 @@ std::vector< std::vector<MyVertex> > Dissection::Result()
           for(int j = 0;j < res[i].size();j ++)
           rec.push_back(res[i][j]);
      }
-     record(rec);
+     cout << rec.size() << endl;
+     record(rec , "result.ply");
      return res;
 }
