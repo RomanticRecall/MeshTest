@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-01 20:27:30
+ * @LastEditTime: 2023-06-02 14:22:24
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -23,8 +23,9 @@ int main()
     vector<MyVertex> input;
     vector<vector<MyVertex>> output;
     Convertcases cvtcs;
-    cvtcs.read( input , "ARC_path_bug1035.txt" );
-    Dissection disc(input);
+    string s = "../source/txt_source/Dummy_indu.txt";
+    cvtcs.read( input , s );
+    Dissection disc( input , s );
     output = disc.Result();
     cout << "we split out " << output.size() << " shapes" << endl;
 

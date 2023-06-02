@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-05-29 17:03:19
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-01 20:21:54
+ * @LastEditTime: 2023-06-02 18:39:56
  * @FilePath: \MeshTest\MyTest\Dissection.cpp
  * @Description: 
  * 
@@ -10,14 +10,24 @@
  */
 #include "Dissection.h"
 
-Dissection::Dissection(){}
+Dissection::Dissection():filename(""){}
 
-Dissection::Dissection(std::vector<MyVertex>& poly)
+Dissection::Dissection(std::vector<MyVertex>& poly , string s)
 {
      ShellPnts.clear();
      for(int i = 0; i < poly.size();i ++)
      ShellPnts.push_back(poly[i]);
-     record(poly , "original.ply");
+     for(int i = s.length();i >= 0;i --)
+     {
+          if(s[i] == '/')
+          {
+               filename = s.substr(i + 1, s.length() - i - 1);
+               break;
+          }
+          if(i == 0)
+          filename == s;
+     }
+     record(poly);
 }
 
 Dissection::~Dissection(){}
@@ -66,8 +76,6 @@ void Dissection::preprocess()
 
 void Dissection::derepeat()
 {
-     for(int i = 0;i < normal.size();i++)
-     cout << normal[i].P().X() << " " << normal[i].P().Y() << " " << endl;
      for(int i = 1;i < normal.size();i ++)
      {
           if(normal[i] == normal[i - 1] || normal[i] == normal[i - 1] * (-1.0) )
@@ -123,6 +131,16 @@ bool Dissection::clockwise()
           else
           return false;
      }
+}
+
+bool Dissection::point_on_edge(MyVertex e1,MyVertex e2,MyVertex v)
+{
+     double d1 = sqrt( (e1 - e2) * (e1 - e2) );
+     double d2 = sqrt( (e1 - v) * (e1 - v) );
+     double d3 = sqrt( (e2 - v) * (e2 - v) );
+     if( ( d2 < EPSIL && d2 > -EPSIL ) || ( d3 < EPSIL && d3 > -EPSIL ) )
+     return false;
+     return ( d1 < d2 + d3 + EPSIL && d1 > d2 + d3 - EPSIL ) ;
 }
 
 bool Dissection::oppo(int n1,int n2)
@@ -439,7 +457,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
                if(jud)
                {
                     MyVertex now;
-                    now.P().Construct<double> (ShellPnts[n2].P().X() , ShellPnts[n1 + 1].P().Y() , 0.0);
+                    now.P() = vcg::Point3d::Construct<double> (ShellPnts[n2].P().X() , ShellPnts[n1 + 1].P().Y() , 0.0);
                     mark[n2].push_back(now);
                }
           }
@@ -455,7 +473,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
                if(jud)
                {
                     MyVertex now;
-                    now.P().Construct<double> (ShellPnts[n2].P().X() , ShellPnts[n1].P().Y() , 0.0);
+                    now.P() = vcg::Point3d::Construct<double> (ShellPnts[n2].P().X() , ShellPnts[n1].P().Y() , 0.0);
                     mark[n2].push_back(now);
                }
           }
@@ -475,7 +493,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
                if(jud)
                {
                     MyVertex now;
-                    now.P().Construct<double> (ShellPnts[n1 + 1].P().X() , ShellPnts[n2].P().Y() , 0.0);
+                    now.P() = vcg::Point3d::Construct<double> (ShellPnts[n1 + 1].P().X() , ShellPnts[n2].P().Y() , 0.0);
                     mark[n2].push_back(now);
                }
           }
@@ -491,7 +509,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
                if(jud)
                {
                     MyVertex now;
-                    now.P().Construct<double> (ShellPnts[n1].P().X() , ShellPnts[n2].P().Y() , 0.0);
+                    now.P() = vcg::Point3d::Construct<double> (ShellPnts[n1].P().X() , ShellPnts[n2].P().Y() , 0.0);
                     mark[n2].push_back(now);
                }
           }
@@ -520,7 +538,8 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
           if(jud)
           {
                MyVertex now;
-               now.P().Construct<double> (x , y , 0.0);
+               now.P() = vcg::Point3d::Construct<double> (x , y , 0.0);
+               
                mark[n2].push_back(now);
           }
      }
@@ -545,7 +564,8 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
           if(jud)
           {
                MyVertex now;
-               now.P().Construct<double> (x , y , 0.0);
+               now.P() = vcg::Point3d::Construct<double> (x , y , 0.0);
+               
                mark[n2].push_back(now);
           }
      }
@@ -560,8 +580,9 @@ void Dissection::close(vector<MyVertex>& temp)
 void Dissection::rec_split()
 {
      std::stack<std::vector<MyVertex>> tool; 
-        tool.push(ShellPnts);
-        int cnt = 0;
+     tool.push(ShellPnts);
+     int cnt = 0;
+     vector<vector<MyVertex>> last_res;
      while(!tool.empty())
      {
           double dist,min_dist;
@@ -604,6 +625,12 @@ void Dissection::rec_split()
                     now.push_back(temp[mark_j + 1]);
                     now.push_back(temp[mark_i]);
                     res.push_back(now);
+                    // last_res = postprocess(now);
+                    // for(int i = 0;i < last_res.size();i ++)
+                    // {
+                    //      close(last_res[i]);
+                    //      res.push_back(last_res[i]);
+                    // }
                     types.push_back(0);
                     now.clear();
                     for(int j = 0;j < temp.size();j ++)
@@ -618,10 +645,9 @@ void Dissection::rec_split()
                     for(int j = mark_i + 1;j <= mark_j;j ++)
                     now.push_back(temp[j]);
                     tool.push(now);
-
                     break;
                }
-
+               
           }
 
           if(!jud)
@@ -659,6 +685,139 @@ void Dissection::rec_split()
      }
 }
 
+vector<vector<MyVertex>> Dissection::postprocess(vector<MyVertex>& raw)
+{
+     bool mark = false;
+     vector<vector<MyVertex>> now_res,next_res;
+     vector<MyVertex> temp;
+     MyVertex np;
+     // for(int k = 0;k < raw.size();k ++)
+     // cout << raw[k].P().X() << " " << raw[k].P().Y() << endl;
+     // cout << endl;
+     for(int i = 0;i < raw.size();i ++)
+     {
+          for(int j = 0;j < ShellPnts.size();j ++)
+          {
+               if( point_on_edge( raw[i] , raw[(i + 1) % 4] , ShellPnts[j] ) )
+               {
+                    // cout << raw[i].P().X() << " " << raw[i].P().Y() << endl;
+                    // cout << raw[(i + 1) % 4].P().X() << " " << raw[(i + 1) % 4].P().Y() << endl;
+                    // cout << ShellPnts[j].P().X() << " " << ShellPnts[j].P().Y() << endl << endl;
+                    mark = true;
+
+                    if( ( raw[i] - raw[(i + 1) % 4] ).P().X() < EPSIL && ( raw[i] - raw[(i + 1) % 4] ).P().X() > -EPSIL )
+                    np.P() = vcg::Point3d::Construct<double>( raw[(i + 2) % 4].P().X() , ShellPnts[j].P().Y() , 0.0 );
+                    else if( ( raw[i] - raw[(i + 1) % 4] ).P().Y() < EPSIL && ( raw[i] - raw[(i + 1) % 4] ).P().Y() > -EPSIL )
+                    np.P() = vcg::Point3d::Construct<double>( ShellPnts[j].P().X() , raw[(i + 2) % 4].P().Y() , 0.0 );
+                    else
+                    {
+                         double k = ( raw[(i + 1) % 4] - raw[i] ).P().Y() / ( raw[(i + 1) % 4] - raw[i] ).P().X();
+                         double b1 = ShellPnts[j].P().Y() + ShellPnts[j].P().X() / k;
+                         double b2 = raw[(i + 2) % 4].P().Y() - raw[(i + 2) % 4].P().X() * k;
+                         double x = k * (b2 - b1) / (k * k + 1);
+                         double y = k * x + b2;
+                         np.P() = vcg::Point3d::Construct<double>( x , y , 0.0 );
+                    }
+
+                    temp.clear();
+                    temp.push_back( raw[i] );  temp.push_back( ShellPnts[j] );
+                    temp.push_back( np ); temp.push_back( raw[(i + 3) % 4] );
+                    // for(int k = 0;k < temp.size();k ++)
+                    // cout << temp[k].P().X() << " " << temp[k].P().Y() << endl;
+                    // cout << endl;
+
+                    next_res.clear(); next_res = postprocess(temp);
+                    for(int i = 0;i < next_res.size();i ++) now_res.push_back(next_res[i]);
+
+                    temp.clear();
+                    temp.push_back( ShellPnts[j] ); temp.push_back( raw[(i + 1) % 4] );
+                    temp.push_back( raw[(i + 2) % 4] ); temp.push_back( np );
+
+                    // for(int k = 0;k < temp.size();k ++)
+                    // cout << temp[k].P().X() << " " << temp[k].P().Y() << endl;
+                    // cout << endl;
+
+                    next_res.clear(); next_res = postprocess(temp);
+                    for(int i = 0;i < next_res.size();i ++) now_res.push_back(next_res[i]);
+
+                    break;
+
+               }
+          }
+          if(mark)
+          break;
+     }
+     
+     if(!mark)
+     now_res.push_back(raw);
+
+     return now_res;
+}
+
+void Dissection::Info()
+{
+     cout << "now have " << ShellPnts.size() << " points" << endl;
+     for(int i = 0;i < ShellPnts.size();i ++)
+     cout << ShellPnts[i].P().X() << " " << ShellPnts[i].P().Y() << endl;
+}
+
+void Dissection::record(vector<MyVertex> external)
+{
+     MyMesh mesh;
+     close(external);
+     vcg::tri::Allocator<MyMesh>::AddVertices(mesh, external.size() - 1);
+     vcg::tri::Allocator<MyMesh>::AddEdges(mesh, external.size() - 1);
+     for(int i = 0;i < external.size() - 1;i ++)
+     mesh.vert[i] = external[i];
+     for(int i = 0;i < external.size() - 2;i ++)
+     {
+          mesh.edge[i].V(0) = &mesh.vert[i];
+          mesh.edge[i].V(1) = &mesh.vert[i + 1];
+     }
+     mesh.edge[external.size() - 2].V(0) = &mesh.vert[external.size() - 2];
+     mesh.edge[external.size() - 2].V(1) = &mesh.vert[0];
+     mesh.UpdateDataStructure();
+     std::cout << "vn: " << mesh.vn << " en: " << mesh.en << " fn: " << mesh.fn << std::endl;
+     string s = "../source/ply_source/" + filename.substr(0,filename.size() - 4) + "_original.ply";
+     WritePLY(mesh, s);
+}
+
+void Dissection::record(vector<vector<MyVertex>> external)
+{
+     MyMesh mesh;
+     int vn = 0,en;
+     for(int i = 0;i < external.size();i ++)
+     {
+          close(external[i]);
+          vn += external[i].size() - 1;
+          en = vn;
+     }
+     vcg::tri::Allocator<MyMesh>::AddVertices(mesh , vn);
+     vcg::tri::Allocator<MyMesh>::AddEdges(mesh , en);
+     int shift = 0;
+     for(int i = 0;i < external.size();i ++)
+     {
+          for(int j = 0;j < external[i].size() - 1;j ++)
+               mesh.vert[shift + j] = external[i][j];
+          shift += external[i].size() - 1;
+     }
+     shift = 0;
+     for(int i = 0;i < external.size();i ++)
+     {
+          for(int j = 0;j < external[i].size() - 2;j ++)
+          {
+               mesh.edge[shift + j].V(0) = &mesh.vert[shift + j];
+               mesh.edge[shift + j].V(1) = &mesh.vert[shift + j + 1];
+          }
+          mesh.edge[shift + external[i].size() - 2].V(0) = &mesh.vert[shift + external[i].size() - 2];
+          mesh.edge[shift + external[i].size() - 2].V(1) = &mesh.vert[shift];
+          shift += external[i].size() - 1;
+     }
+     mesh.UpdateDataStructure();
+     string s = "../source/ply_result/" + filename.substr(0,filename.size() - 4) + "_result.ply";
+     WritePLY(mesh, s);
+}
+
 void Dissection::record(vector<MyVertex> external , string s)
 {
      MyMesh mesh;
@@ -675,6 +834,7 @@ void Dissection::record(vector<MyVertex> external , string s)
      mesh.edge[external.size() - 2].V(0) = &mesh.vert[external.size() - 2];
      mesh.edge[external.size() - 2].V(1) = &mesh.vert[0];
      mesh.UpdateDataStructure();
+     std::cout << "vn: " << mesh.vn << " en: " << mesh.en << " fn: " << mesh.fn << std::endl;
      WritePLY(mesh, s);
 }
 
@@ -686,15 +846,8 @@ std::vector< std::vector<MyVertex> > Dissection::Result()
      if(len == 0)
      return res;
      interpolate();
+     // record(ShellPnts , "processing.ply");
      rec_split();
-     vector<MyVertex> rec;
-     for(int i = 0;i < res.size();i ++)
-     {
-          close(res[i]);
-          for(int j = 0;j < res[i].size();j ++)
-          rec.push_back(res[i][j]);
-     }
-     cout << rec.size() << endl;
-     record(rec , "result.ply");
+     record(res);
      return res;
 }
