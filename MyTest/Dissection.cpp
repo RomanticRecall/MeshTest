@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-05-29 17:03:19
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-02 18:39:56
+ * @LastEditTime: 2023-06-03 17:53:08
  * @FilePath: \MeshTest\MyTest\Dissection.cpp
  * @Description: 
  * 
@@ -42,23 +42,23 @@ void Dissection::preprocess()
      {
           dx = ShellPnts[i + 1].P().X() - ShellPnts[i].P().X();
           dy = ShellPnts[i + 1].P().Y() - ShellPnts[i].P().Y();
-          if(dy < EPSIL && dy > (-1.0) * EPSIL )
+          if(dy < EPSILON && dy > (-1.0) * EPSILON )
           {
-               if(dx > EPSIL)
+               if(dx > EPSILON)
                theta = 0.0;
                else
                theta = M_PI;
           }
           else
           {
-               if(dx < EPSIL && dx > (-1.0) * EPSIL)
+               if(dx < EPSILON && dx > (-1.0) * EPSILON)
                {
-                    if(dy > EPSIL)
+                    if(dy > EPSILON)
                     theta = M_PI_2;
                     else
                     theta = M_PI_2 * 3.0;
                }
-               else if(dx > EPSIL)
+               else if(dx > EPSILON)
                theta = atan(dy / dx);
                else
                theta = atan(dy / dx) + M_PI;
@@ -116,17 +116,17 @@ bool Dissection::clockwise()
      }
      int len = ShellPnts.size();
      dy = ShellPnts[ (min_subscript + 1) % (len - 1) ].P().Y() - ShellPnts[min_subscript].P().Y();
-     if( dy < EPSIL && dy > EPSIL * (-1.0) )
+     if( dy < EPSILON && dy > EPSILON * (-1.0) )
      {
           dy = ShellPnts[min_subscript].P().Y() - ShellPnts[ (min_subscript - 1 + len - 1) % (len - 1) ].P().Y();
-          if(dy > EPSIL)
+          if(dy > EPSILON)
           return true;
           else
           return false;
      }
      else
      {
-          if(dy > EPSIL)
+          if(dy > EPSILON)
           return true;
           else
           return false;
@@ -138,18 +138,18 @@ bool Dissection::point_on_edge(MyVertex e1,MyVertex e2,MyVertex v)
      double d1 = sqrt( (e1 - e2) * (e1 - e2) );
      double d2 = sqrt( (e1 - v) * (e1 - v) );
      double d3 = sqrt( (e2 - v) * (e2 - v) );
-     if( ( d2 < EPSIL && d2 > -EPSIL ) || ( d3 < EPSIL && d3 > -EPSIL ) )
+     if( ( d2 < EPSILON && d2 > -EPSILON ) || ( d3 < EPSILON && d3 > -EPSILON ) )
      return false;
-     return ( d1 < d2 + d3 + EPSIL && d1 > d2 + d3 - EPSIL ) ;
+     return ( d1 < d2 + d3 + EPSILON && d1 > d2 + d3 - EPSILON ) ;
 }
 
 bool Dissection::oppo(int n1,int n2)
 {
-     if(normal[n1].P().Y() < EPSIL && normal[n1].P().Y() > EPSIL * (-1.0) && normal[n2].P().Y() < EPSIL && normal[n2].P().Y() > EPSIL * (-1.0) )
+     if(normal[n1].P().Y() < EPSILON && normal[n1].P().Y() > EPSILON * (-1.0) && normal[n2].P().Y() < EPSILON && normal[n2].P().Y() > EPSILON * (-1.0) )
      {
-          if(ShellPnts[n1].P().X() < ShellPnts[n2].P().X() && normal[n1].P().X() > EPSIL && normal[n2].P().X() < EPSIL * (-1.0) )
+          if(ShellPnts[n1].P().X() < ShellPnts[n2].P().X() && normal[n1].P().X() > EPSILON && normal[n2].P().X() < EPSILON * (-1.0) )
           return true;
-          else if(ShellPnts[n1].P().X() > ShellPnts[n2].P().X() && normal[n1].P().X() < (-1.0) * EPSIL && normal[n2].P().X() > EPSIL)
+          else if(ShellPnts[n1].P().X() > ShellPnts[n2].P().X() && normal[n1].P().X() < (-1.0) * EPSILON && normal[n2].P().X() > EPSILON)
           return true;
           return false;
      }
@@ -164,9 +164,9 @@ bool Dissection::oppo(int n1,int n2)
      yb1 = y1 - k * x1;
      yb2 = y2 - k * x2;
 
-     if(yb1 > yb2 && normal[n1].P().Y() < (-1.0) * EPSIL && normal[n2].P().Y() > EPSIL)
+     if(yb1 > yb2 && normal[n1].P().Y() < (-1.0) * EPSILON && normal[n2].P().Y() > EPSILON)
      return true;
-     if(yb1 < yb2 && normal[n1].P().Y() > EPSIL && normal[n2].P().Y() < (-1.0) * EPSIL )
+     if(yb1 < yb2 && normal[n1].P().Y() > EPSILON && normal[n2].P().Y() < (-1.0) * EPSILON )
      return true;
      return false;
      
@@ -178,7 +178,7 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
      dx = v2.P().X() - v1.P().X();
      dy = v2.P().Y() - v1.P().Y();
 
-     if(dy < EPSIL && dy > (-1.0) * EPSIL)
+     if(dy < EPSILON && dy > (-1.0) * EPSILON)
      {
           if(dx > 0)
           theta1 = 0.0;
@@ -187,14 +187,14 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
      }
      else
      {
-          if(dx < EPSIL && dx > (-1.0) * EPSIL)
+          if(dx < EPSILON && dx > (-1.0) * EPSILON)
           {
-               if(dy > EPSIL)
+               if(dy > EPSILON)
                theta1 = M_PI_2;
                else
                theta1 = M_PI_2 * 3.0;
           }
-          else if(dx > EPSIL)
+          else if(dx > EPSILON)
           theta1 = atan(dy/dx);
           else
           theta1 = atan(dy/dx) + M_PI;
@@ -209,7 +209,7 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
      theta1 -= 2.0 * M_PI;
      dx = v4.P().X() - v3.P().X();
      dy = v4.P().Y() - v3.P().Y(); 
-     if(dy < EPSIL && dy > (-1.0) * EPSIL)
+     if(dy < EPSILON && dy > (-1.0) * EPSILON)
      {
           if(dx > 0)
           theta2 = 0.0;
@@ -218,14 +218,14 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
      }
      else
      {
-          if(dx < EPSIL && dx > (-1.0) * EPSIL)
+          if(dx < EPSILON && dx > (-1.0) * EPSILON)
           {
-               if(dy > EPSIL)
+               if(dy > EPSILON)
                theta2 = M_PI_2;
                else
                theta2 = M_PI_2 * 3.0;
           }
-          else if(dx > EPSIL)
+          else if(dx > EPSILON)
           theta2 = atan(dy/dx);
           else
           theta2 = atan(dy/dx) + M_PI;
@@ -242,11 +242,11 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
      d2.P() = vcg::Point3d::Construct<double>( cos(theta2) , sin(theta2) , 0.0 );
      if( !equal( d1.P().X(),d2.P().Y() * (-1.0) ) && !equal( d1.P().Y() ,d2.P().Y() * (-1.0) ) )
      return false;
-     if(d1.P().Y() < EPSIL && d1.P().Y() > (-1.0) * EPSIL && d2.P().Y() < EPSIL && d2.P().Y() > (-1.0) * EPSIL)
+     if(d1.P().Y() < EPSILON && d1.P().Y() > (-1.0) * EPSILON && d2.P().Y() < EPSILON && d2.P().Y() > (-1.0) * EPSILON)
      {
-          if(v1.P().X() < v3.P().X() && d1.P().X() > EPSIL && d2.P().X() < (-1.0) * EPSIL)
+          if(v1.P().X() < v3.P().X() && d1.P().X() > EPSILON && d2.P().X() < (-1.0) * EPSILON)
           return true;
-          else if(v1.P().X() > v3.P().X() && d1.P().X() < (-1.0) * EPSIL && d2.P().X() > EPSIL)
+          else if(v1.P().X() > v3.P().X() && d1.P().X() < (-1.0) * EPSILON && d2.P().X() > EPSILON)
           return true;
           return false;
      }
@@ -259,9 +259,9 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
         y2 = v3.P().Y();
         yb1 = y1 - k * x1;
         yb2 = y2 - k * x2;
-        if(yb1 > yb2 && d1.P().Y() < (-1.0) * EPSIL && d2.P().Y() > EPSIL)
+        if(yb1 > yb2 && d1.P().Y() < (-1.0) * EPSILON && d2.P().Y() > EPSILON)
         return true;
-        if(yb1 < yb2 && d1.P().Y() > EPSIL && d2.P().Y() < (-1.0) * EPSIL)
+        if(yb1 < yb2 && d1.P().Y() > EPSILON && d2.P().Y() < (-1.0) * EPSILON)
         return true;
         return false;
 }
@@ -269,24 +269,24 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
 bool Dissection::interleave(int n1,int n2)
 {
      double k1,k2,x1,x2,y1,y2,x,y;
-     if(normal[n1].P().Y() < EPSIL && normal[n1].P().Y() > (-1.0) * EPSIL)
+     if(normal[n1].P().Y() < EPSILON && normal[n1].P().Y() > (-1.0) * EPSILON)
      {
-          if( ShellPnts[n1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSIL &&
-               ShellPnts[n1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSIL )
+          if( ShellPnts[n1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSILON &&
+               ShellPnts[n1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSILON )
           return true;
-          if( ShellPnts[n1 + 1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSIL &&
-               ShellPnts[n1 + 1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSIL )
+          if( ShellPnts[n1 + 1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSILON &&
+               ShellPnts[n1 + 1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSILON )
           return true;
           else
           return false;
      }
-     if(normal[n1].P().X() < EPSIL && normal[n1].P().X() > (-1.0) * EPSIL && normal[n2].P().X() < EPSIL && normal[n2].P().X() > (-1.0) * EPSIL)
+     if(normal[n1].P().X() < EPSILON && normal[n1].P().X() > (-1.0) * EPSILON && normal[n2].P().X() < EPSILON && normal[n2].P().X() > (-1.0) * EPSILON)
      {
-          if(ShellPnts[n1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSIL && 
-               ShellPnts[n1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSIL )
+          if(ShellPnts[n1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSILON && 
+               ShellPnts[n1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSILON )
           return true;
-          if(ShellPnts[n1 + 1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSIL &&
-               ShellPnts[n1 + 1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSIL  )
+          if(ShellPnts[n1 + 1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSILON &&
+               ShellPnts[n1 + 1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSILON  )
           return true;
           return false;
      }
@@ -299,10 +299,10 @@ bool Dissection::interleave(int n1,int n2)
      x = (k1 * x1 - y1 - k2 * x2 + y2) / (k1 - k2);
      y = k2 * x - k2 * x2 + y2;
 
-     if( ( x > min( ShellPnts[n1].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSIL &&
-          x < max(ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSIL ) || 
-          ( y > min(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSIL &&
-          y < max(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSIL ) )
+     if( ( x > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSILON &&
+          x < max(ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSILON ) || 
+          ( y > min(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSILON &&
+          y < max(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSILON ) )
      return true;
 
      x1 = ShellPnts[n1].P().X();
@@ -311,18 +311,17 @@ bool Dissection::interleave(int n1,int n2)
      y2 = ShellPnts[n2].P().Y();
      x = (k1 * x1 - y1 - k2 * x2 + y2) / (k1 - k2);
      y = k2 * x - k2 * x2 + y2;
-
-     if( ( x > min( ShellPnts[n1].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSIL &&
-          x < max(ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSIL ) || 
-          ( y > min(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSIL &&
-          y < max(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSIL ) )
+     if( ( x > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSILON &&
+          x < max(ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSILON ) || 
+          ( y > min(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSILON &&
+          y < max(ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSILON ) )
      return true;
      return false;
 }
 
 bool Dissection::equal(double d1,double d2)
 {
-     if(d1 - d2 > EPSIL || d1 - d2 < (-1.0) * EPSIL)
+     if(d1 - d2 > EPSILON || d1 - d2 < (-1.0) * EPSILON)
      return false;
      return true;
 }
@@ -333,12 +332,12 @@ bool Dissection::isRectangle(MyVertex &v1,MyVertex &v2,MyVertex &v3,MyVertex &v4
      double l1 = ( v2.P().Y() - v1.P().Y() ) * (v2.P().Y() - v1.P().Y()) + (v2.P().X() - v1.P().X()) * (v2.P().X() - v1.P().X());
      double l2 = ( v4.P().Y() - v3.P().Y()) * (v4.P().Y() - v3.P().Y()) + (v4.P().X() - v3.P().X()) * (v4.P().X() - v3.P().X());
 
-     if(l1 < l2 - EPSIL || l1 > l2 + EPSIL)
+     if(l1 < l2 - EPSILON || l1 > l2 + EPSILON)
      return false;
 
      double inner_conductor = (v2.P().X() - v1.P().X()) * (v4.P().X() - v1.P().X()) + (v2.P().Y() - v1.P().Y()) * (v4.P().Y() - v1.P().Y());
 
-     if(inner_conductor > EPSIL || inner_conductor < -EPSIL)
+     if(inner_conductor > EPSILON || inner_conductor < -EPSILON)
      return false;
 
      return true;
@@ -361,11 +360,11 @@ bool Dissection::intersection(MyVertex &v1,MyVertex &v2,vector<MyVertex>& temp)
                if( ( (temp[i].P().X() - v1.P().X()) * (temp[i].P().Y() - temp[i + 1].P().Y()) - 
                     (temp[i].P().Y() - v1.P().Y()) * (temp[i].P().X() - temp[i + 1].P().X()) ) * 
                     ( (temp[i].P().X() - v2.P().X()) * (temp[i].P().Y() - temp[i + 1].P().Y()) - 
-                    (temp[i].P().Y() - v2.P().Y()) * (temp[i].P().X() - temp[i + 1].P().X()) ) <= EPSIL &&
+                    (temp[i].P().Y() - v2.P().Y()) * (temp[i].P().X() - temp[i + 1].P().X()) ) <= EPSILON &&
                     ( (v1.P().X() - temp[i].P().X()) * (v1.P().Y() - v2.P().Y()) - 
                     (v1.P().Y() - temp[i].P().Y()) * (v1.P().X() - v2.P().X()) ) * 
                     ( (v1.P().X() - temp[i + 1].P().X()) * (v1.P().Y() - v2.P().Y()) - 
-                    (v1.P().Y() - temp[i + 1].P().Y()) * (v1.P().X() - v2.P().X()) ) <= EPSIL )
+                    (v1.P().Y() - temp[i + 1].P().Y()) * (v1.P().X() - v2.P().X()) ) <= EPSILON )
                return true;
           }
      }
@@ -374,9 +373,9 @@ bool Dissection::intersection(MyVertex &v1,MyVertex &v2,vector<MyVertex>& temp)
 
 double Dissection::parallel_distant(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
 {
-     if(v2.P().X() - v1.P().X() < EPSIL && v2.P().X() - v1.P().X() > (-1.0) * EPSIL)
+     if(v2.P().X() - v1.P().X() < EPSILON && v2.P().X() - v1.P().X() > (-1.0) * EPSILON)
      return v3.P().X() > v1.P().X() ? v3.P().X() - v1.P().X() : v1.P().X() - v3.P().X();
-     if(v2.P().Y() - v1.P().Y() < EPSIL && v2.P().Y() - v1.P().Y() > (-1.0) * EPSIL)
+     if(v2.P().Y() - v1.P().Y() < EPSILON && v2.P().Y() - v1.P().Y() > (-1.0) * EPSILON)
      return v3.P().Y() > v1.P().Y() ? v3.P().Y() - v1.P().Y() : v1.P().Y() - v3.P().Y();
      double k1,k2,x1,x2,y1,y2,x,y;
      k2 = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
@@ -443,9 +442,9 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
      k1 = normal[n1].P().Y() / normal[n1].P().X();
      k2 = (-1.0) / k1;
      bool jud;
-     if(normal[n1].P().Y() < EPSIL && normal[n1].P().Y() > (-1.0) * EPSIL)
+     if(normal[n1].P().Y() < EPSILON && normal[n1].P().Y() > (-1.0) * EPSILON)
      {
-          if( ShellPnts[n1 + 1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSIL  && ShellPnts[n1 + 1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSIL )
+          if( ShellPnts[n1 + 1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSILON  && ShellPnts[n1 + 1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSILON )
           {
                jud = true;
                for(int i = 0;i < mark[n2].size();i ++)
@@ -461,7 +460,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
                     mark[n2].push_back(now);
                }
           }
-          if( ShellPnts[n1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSIL  && ShellPnts[n1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSIL )
+          if( ShellPnts[n1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSILON  && ShellPnts[n1].P().Y() < max( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) - EPSILON )
           {
                jud = true;
                for(int i = 0;i < mark[n2].size();i ++)
@@ -479,9 +478,9 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
           }
           return ;
      }
-     if(normal[n1].P().X() < EPSIL && normal[n1].P().X() > (-1.0) * EPSIL && normal[n2].P().X() < EPSIL && normal[n2].P().X() > (-1.0) * EPSIL)
+     if(normal[n1].P().X() < EPSILON && normal[n1].P().X() > (-1.0) * EPSILON && normal[n2].P().X() < EPSILON && normal[n2].P().X() > (-1.0) * EPSILON)
      {
-          if( ShellPnts[n1 + 1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSIL && ShellPnts[n1 + 1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSIL )
+          if( ShellPnts[n1 + 1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSILON && ShellPnts[n1 + 1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSILON )
           {
                jud = true;
                for(int i = 0;i < mark[n2].size();i ++)
@@ -497,7 +496,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
                     mark[n2].push_back(now);
                }
           }
-          if( ShellPnts[n1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSIL && ShellPnts[n1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSIL )
+          if( ShellPnts[n1].P().X() > min( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) + EPSILON && ShellPnts[n1].P().X() < max( ShellPnts[n2].P().X() , ShellPnts[n2 + 1].P().X() ) - EPSILON )
           {
                jud = true;
                for(int i = 0;i < mark[n2].size();i ++)
@@ -523,10 +522,10 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
      x = (k1 * x1 - y1 - k2 * x2 + y2) / (k1 - k2);
      y = k2 * x - k2 * x2 + y2;
 
-     if( ( x > min(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) + EPSIL && 
-          x < max(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) - EPSIL ) || 
-          ( y > min(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y()) + EPSIL &&
-          y < max(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y() - EPSIL) ) )
+     if( ( x > min(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) + EPSILON && 
+          x < max(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) - EPSILON ) || 
+          ( y > min(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y()) + EPSILON &&
+          y < max(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y() - EPSILON) ) )
      {
           jud = true;
           for(int i = 0;i < mark[n2].size();i ++)
@@ -549,10 +548,10 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
      y2 = ShellPnts[n2].P().Y();
      x = (k1 * x1 - y1 - k2 * x2 + y2) / (k1 - k2);
      y = k2 * x - k2 * x2 + y2;
-     if( ( x > min(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) + EPSIL && 
-          x < max(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) - EPSIL ) ||
-          ( y > min(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y()) + EPSIL &&
-           y < max(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y() - EPSIL ) ) )
+     if( ( x > min(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) + EPSILON && 
+          x < max(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) - EPSILON ) ||
+          ( y > min(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y()) + EPSILON &&
+           y < max(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y() - EPSILON ) ) )
      {
           jud = true;
           for(int i = 0;i < mark[n2].size();i ++)
@@ -583,12 +582,14 @@ void Dissection::rec_split()
      tool.push(ShellPnts);
      int cnt = 0;
      vector<vector<MyVertex>> last_res;
+     std::vector<MyVertex> temp,now;
      while(!tool.empty())
      {
           double dist,min_dist;
           int mark_i,mark_j;
           bool jud = false;
-          std::vector<MyVertex> temp = tool.top(),now;
+          temp.clear();  now.clear();
+          temp = tool.top();
           close(temp);
           // derepeat(temp);
           tool.pop();
@@ -623,15 +624,15 @@ void Dissection::rec_split()
                     now.push_back(temp[mark_i + 1]);
                     now.push_back(temp[mark_j]);
                     now.push_back(temp[mark_j + 1]);
-                    now.push_back(temp[mark_i]);
-                    res.push_back(now);
-                    // last_res = postprocess(now);
-                    // for(int i = 0;i < last_res.size();i ++)
-                    // {
-                    //      close(last_res[i]);
-                    //      res.push_back(last_res[i]);
-                    // }
-                    types.push_back(0);
+                    // now.push_back(temp[mark_i]);
+                    // res.push_back(now);
+                    last_res = postprocess(now);
+                    for(int i = 0;i < last_res.size();i ++)
+                    {
+                         close(last_res[i]);
+                         res.push_back(last_res[i]);
+                         types.push_back(0);
+                    }
                     now.clear();
                     for(int j = 0;j < temp.size();j ++)
                     {
@@ -662,7 +663,7 @@ void Dissection::rec_split()
                          temp.erase(temp.begin() + i);
                          i --;
                     }
-                    else if( (temp[i].P().X() - temp[i - 1].P().X() == 0.00000 && temp[i + 1].P().X() - temp[i].P().X() == 0.00000) || ( k1 <= k2 + EPSIL && k1 >= k2 - EPSIL ) )
+                    else if( (temp[i].P().X() - temp[i - 1].P().X() == 0.00000 && temp[i + 1].P().X() - temp[i].P().X() == 0.00000) || ( k1 <= k2 + EPSILON && k1 >= k2 - EPSILON ) )
                     {
                          temp.erase(temp.begin() + i);
                          i --;
@@ -671,7 +672,7 @@ void Dissection::rec_split()
                int len = temp.size();
                k1 = ( temp[1].P().Y() - temp[0].P().Y() ) / ( temp[1].P().X() - temp[0].P().X() );
                k2 = ( temp[len - 1].P().Y() - temp[len - 2].P().Y() ) / ( temp[len - 1].P().X() - temp[len - 2].P().X() );
-               if( ( temp[1].P().X() - temp[0].P().X() == 0.00000 && temp[len - 1].P().X() - temp[len - 2].P().X() == 0.00000 ) || ( k1 <= k2 + EPSIL && k1 >= k2 - EPSIL ) )
+               if( ( temp[1].P().X() - temp[0].P().X() == 0.00000 && temp[len - 1].P().X() - temp[len - 2].P().X() == 0.00000 ) || ( k1 <= k2 + EPSILON && k1 >= k2 - EPSILON ) )
                {
                     temp.erase(temp.begin());
                     temp[temp.size() - 1] = temp[0];
@@ -691,23 +692,17 @@ vector<vector<MyVertex>> Dissection::postprocess(vector<MyVertex>& raw)
      vector<vector<MyVertex>> now_res,next_res;
      vector<MyVertex> temp;
      MyVertex np;
-     // for(int k = 0;k < raw.size();k ++)
-     // cout << raw[k].P().X() << " " << raw[k].P().Y() << endl;
-     // cout << endl;
      for(int i = 0;i < raw.size();i ++)
      {
           for(int j = 0;j < ShellPnts.size();j ++)
           {
                if( point_on_edge( raw[i] , raw[(i + 1) % 4] , ShellPnts[j] ) )
                {
-                    // cout << raw[i].P().X() << " " << raw[i].P().Y() << endl;
-                    // cout << raw[(i + 1) % 4].P().X() << " " << raw[(i + 1) % 4].P().Y() << endl;
-                    // cout << ShellPnts[j].P().X() << " " << ShellPnts[j].P().Y() << endl << endl;
                     mark = true;
 
-                    if( ( raw[i] - raw[(i + 1) % 4] ).P().X() < EPSIL && ( raw[i] - raw[(i + 1) % 4] ).P().X() > -EPSIL )
+                    if( ( raw[i] - raw[(i + 1) % 4] ).P().X() < EPSILON && ( raw[i] - raw[(i + 1) % 4] ).P().X() > -EPSILON )
                     np.P() = vcg::Point3d::Construct<double>( raw[(i + 2) % 4].P().X() , ShellPnts[j].P().Y() , 0.0 );
-                    else if( ( raw[i] - raw[(i + 1) % 4] ).P().Y() < EPSIL && ( raw[i] - raw[(i + 1) % 4] ).P().Y() > -EPSIL )
+                    else if( ( raw[i] - raw[(i + 1) % 4] ).P().Y() < EPSILON && ( raw[i] - raw[(i + 1) % 4] ).P().Y() > -EPSILON )
                     np.P() = vcg::Point3d::Construct<double>( ShellPnts[j].P().X() , raw[(i + 2) % 4].P().Y() , 0.0 );
                     else
                     {
@@ -722,9 +717,6 @@ vector<vector<MyVertex>> Dissection::postprocess(vector<MyVertex>& raw)
                     temp.clear();
                     temp.push_back( raw[i] );  temp.push_back( ShellPnts[j] );
                     temp.push_back( np ); temp.push_back( raw[(i + 3) % 4] );
-                    // for(int k = 0;k < temp.size();k ++)
-                    // cout << temp[k].P().X() << " " << temp[k].P().Y() << endl;
-                    // cout << endl;
 
                     next_res.clear(); next_res = postprocess(temp);
                     for(int i = 0;i < next_res.size();i ++) now_res.push_back(next_res[i]);
@@ -732,10 +724,6 @@ vector<vector<MyVertex>> Dissection::postprocess(vector<MyVertex>& raw)
                     temp.clear();
                     temp.push_back( ShellPnts[j] ); temp.push_back( raw[(i + 1) % 4] );
                     temp.push_back( raw[(i + 2) % 4] ); temp.push_back( np );
-
-                    // for(int k = 0;k < temp.size();k ++)
-                    // cout << temp[k].P().X() << " " << temp[k].P().Y() << endl;
-                    // cout << endl;
 
                     next_res.clear(); next_res = postprocess(temp);
                     for(int i = 0;i < next_res.size();i ++) now_res.push_back(next_res[i]);
@@ -756,9 +744,12 @@ vector<vector<MyVertex>> Dissection::postprocess(vector<MyVertex>& raw)
 
 void Dissection::Info()
 {
-     cout << "now have " << ShellPnts.size() << " points" << endl;
-     for(int i = 0;i < ShellPnts.size();i ++)
-     cout << ShellPnts[i].P().X() << " " << ShellPnts[i].P().Y() << endl;
+     // cout << "now have " << ShellPnts.size() << " points" << endl;
+     // for(int i = 0;i < ShellPnts.size();i ++)
+     // cout << ShellPnts[i].P().X() << " " << ShellPnts[i].P().Y() << endl;
+     cout << "now have " << normal.size() << " normals" << endl;
+     for(int i = 0;i < normal.size();i ++)
+     cout << i << ": " << normal[i].P().X() << " " << normal[i].P().Y() << endl;
 }
 
 void Dissection::record(vector<MyVertex> external)
@@ -845,8 +836,9 @@ std::vector< std::vector<MyVertex> > Dissection::Result()
      int len = ShellPnts.size();
      if(len == 0)
      return res;
+     // Info();
      interpolate();
-     // record(ShellPnts , "processing.ply");
+     // Info();
      rec_split();
      record(res);
      return res;

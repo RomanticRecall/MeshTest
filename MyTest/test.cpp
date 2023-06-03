@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-02 14:22:24
+ * @LastEditTime: 2023-06-03 17:56:33
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -23,7 +23,7 @@ int main()
     vector<MyVertex> input;
     vector<vector<MyVertex>> output;
     Convertcases cvtcs;
-    string s = "../source/txt_source/Dummy_indu.txt";
+    string s = "../source/txt_source/Mesh_Geom_Path.txt";
     cvtcs.read( input , s );
     Dissection disc( input , s );
     output = disc.Result();

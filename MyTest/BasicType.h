@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:33:00
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-01 20:22:41
+ * @LastEditTime: 2023-06-03 17:23:03
  * @FilePath: \MeshTest\MyTest\BasicType.h
  * @Description: 
  * 
@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <cstring>
+#include <iomanip>
 
 
 #include "../vcglib/vcg/simplex/vertex/base.h"

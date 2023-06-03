@@ -14,6 +14,8 @@
 #include "BasicType.h"
 #include "Function.h"
 
+#define EPSILON 0.0001
+
 class Dissection
 {
     public:
