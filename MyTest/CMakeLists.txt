@@ -8,6 +8,8 @@ add_executable(
     test.cpp
     Function.cpp
     Dissection.cpp
+    Shape.cpp
+    RecMesh.cpp
     Convertcases.cpp
     ../vcglib/wrap/ply/plylib.cpp
 )

@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-05-29 17:03:19
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-03 17:53:08
+ * @LastEditTime: 2023-06-05 22:10:02
  * @FilePath: \MeshTest\MyTest\Dissection.cpp
  * @Description: 
  * 
@@ -35,42 +35,52 @@ Dissection::~Dissection(){}
 void Dissection::preprocess()
 {
      vector<MyVertex> tool;
-     double dx,dy,theta,min_x = ShellPnts[0].P().X();
+     Real dx,dy,x,y,mod;
      MyVertex temp;
      bool clock_wise = clockwise();
      for(int i = 0;i < ShellPnts.size() - 1;i ++)
      {
           dx = ShellPnts[i + 1].P().X() - ShellPnts[i].P().X();
           dy = ShellPnts[i + 1].P().Y() - ShellPnts[i].P().Y();
-          if(dy < EPSILON && dy > (-1.0) * EPSILON )
+          if(dy < 0.00001 && dy > -0.00001)
           {
-               if(dx > EPSILON)
-               theta = 0.0;
-               else
-               theta = M_PI;
-          }
-          else
-          {
-               if(dx < EPSILON && dx > (-1.0) * EPSILON)
+               if(clock_wise)
                {
-                    if(dy > EPSILON)
-                    theta = M_PI_2;
-                    else
-                    theta = M_PI_2 * 3.0;
+                    if(dx < -0.00001) { x = 0.0; y = 1.0; }
+                    else if(dx > 0.00001) { x = 0.0; y = -1.0; }
                }
-               else if(dx > EPSILON)
-               theta = atan(dy / dx);
                else
-               theta = atan(dy / dx) + M_PI;
+               {
+                    if(dx < -0.00001) { x = -1.0; y = 0.0; }
+                    else if(dx > 0.00001) { x = 0.0; y = 1.0; }
+               }
+               temp.P() = vcg::Point3d::Construct<double>( x.toDouble() , y.toDouble() , 0.0 );
           }
-          if(!clock_wise)
-          theta += M_PI_2;
           else
-          theta += M_PI_2 * 3.0;
-          while(theta >= M_PI * 2.0)
-          theta -= M_PI * 2.0;
-          temp.P() = vcg::Point3d::Construct<double>( cos(theta) , sin(theta) , 0.0 );
+          {
+               x = 1.0;
+               y = -dx / dy;
+               if(clock_wise)
+               {
+                    if(dy < -0.00001)
+                    { dx *= -1.0 ; dy *= -1.0; }
+               }
+               else
+               {
+                    if(dy > 0.00001)
+                    { dx *= -1.0 ; dy *= -1.0; }
+               }
+               mod = sqrt( ( x * x + y * y ).toDouble() );
+               temp.P() = vcg::Point3d::Construct<double>( (x/mod).toDouble() , (y/mod).toDouble() , 0.0 );
+          }
           normal.push_back( temp );
+
+          Real inner_conductor = Real( ( ShellPnts[i + 1] - ShellPnts[i] ).P().X() ) * Real( temp.P().X() ) + 
+                                   Real( ( ShellPnts[i + 1] - ShellPnts[i] ).P().Y() ) * Real( temp.P().Y() );
+          std::cout << ( ShellPnts[i + 1] - ShellPnts[i] ).P().X() << " " << ( ShellPnts[i + 1] - ShellPnts[i] ).P().Y() << std::endl;
+          std::cout << temp.P().X() << " " << temp.P().Y() << std::endl;
+          std::cout << inner_conductor << std::endl;
+          std::cout << std::endl;
      }
 }
 
@@ -97,7 +107,7 @@ void Dissection::derepeat()
 
 bool Dissection::clockwise()
 {
-     double min_x , dy;
+     Real min_x , dy;
      bool first = true;
      int min_subscript = 0;
      for(int i = 0;i < ShellPnts.size();i ++)
@@ -135,9 +145,9 @@ bool Dissection::clockwise()
 
 bool Dissection::point_on_edge(MyVertex e1,MyVertex e2,MyVertex v)
 {
-     double d1 = sqrt( (e1 - e2) * (e1 - e2) );
-     double d2 = sqrt( (e1 - v) * (e1 - v) );
-     double d3 = sqrt( (e2 - v) * (e2 - v) );
+     Real d1 = sqrt( (e1 - e2) * (e1 - e2) );
+     Real d2 = sqrt( (e1 - v) * (e1 - v) );
+     Real d3 = sqrt( (e2 - v) * (e2 - v) );
      if( ( d2 < EPSILON && d2 > -EPSILON ) || ( d3 < EPSILON && d3 > -EPSILON ) )
      return false;
      return ( d1 < d2 + d3 + EPSILON && d1 > d2 + d3 - EPSILON ) ;
@@ -154,7 +164,7 @@ bool Dissection::oppo(int n1,int n2)
           return false;
      }
 
-     double x1,x2,y1,y2,k,yb1,yb2;
+     Real x1,x2,y1,y2,k,yb1,yb2;
      k = ( ShellPnts[n1 + 1].P().Y() - ShellPnts[n1].P().Y() ) / ( ShellPnts[n1 + 1].P().X() - ShellPnts[n1].P().X() );
      
      x1 = ShellPnts[n1].P().X();
@@ -174,7 +184,7 @@ bool Dissection::oppo(int n1,int n2)
 
 bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
 {
-     double dx,dy,theta1,theta2,k1,k2;
+     Real dx,dy,theta1,theta2,k1,k2;
      dx = v2.P().X() - v1.P().X();
      dy = v2.P().Y() - v1.P().Y();
 
@@ -195,9 +205,9 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
                theta1 = M_PI_2 * 3.0;
           }
           else if(dx > EPSILON)
-          theta1 = atan(dy/dx);
+          theta1 = atan( (dy/dx).toDouble() );
           else
-          theta1 = atan(dy/dx) + M_PI;
+          theta1 = atan( (dy/dx).toDouble() ) + M_PI;
      }
      
      if(!clockwise())
@@ -226,9 +236,9 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
                theta2 = M_PI_2 * 3.0;
           }
           else if(dx > EPSILON)
-          theta2 = atan(dy/dx);
+          theta2 = atan( (dy/dx).toDouble());
           else
-          theta2 = atan(dy/dx) + M_PI;
+          theta2 = atan( (dy/dx).toDouble()) + M_PI;
      }
      if(!clockwise())
      theta2 += M_PI_2;
@@ -238,8 +248,8 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
      theta2 -= 2.0 * M_PI;
      MyVertex d1,d2;
 
-     d1.P() = vcg::Point3d::Construct<double>( cos(theta1) , sin(theta1) , 0.0 );
-     d2.P() = vcg::Point3d::Construct<double>( cos(theta2) , sin(theta2) , 0.0 );
+     d1.P() = vcg::Point3d::Construct<double>( cos(theta1.toDouble()) , sin(theta1.toDouble()) , 0.0 );
+     d2.P() = vcg::Point3d::Construct<double>( cos(theta2.toDouble()) , sin(theta2.toDouble()) , 0.0 );
      if( !equal( d1.P().X(),d2.P().Y() * (-1.0) ) && !equal( d1.P().Y() ,d2.P().Y() * (-1.0) ) )
      return false;
      if(d1.P().Y() < EPSILON && d1.P().Y() > (-1.0) * EPSILON && d2.P().Y() < EPSILON && d2.P().Y() > (-1.0) * EPSILON)
@@ -251,7 +261,7 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
           return false;
      }
      
-     double x1,x2,y1,y2,k,yb1,yb2;
+     Real x1,x2,y1,y2,k,yb1,yb2;
      k = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
         x1 = v1.P().X();
         y1 = v1.P().Y();
@@ -268,7 +278,7 @@ bool Dissection::oppo(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
 
 bool Dissection::interleave(int n1,int n2)
 {
-     double k1,k2,x1,x2,y1,y2,x,y;
+     Real k1,k2,x1,x2,y1,y2,x,y;
      if(normal[n1].P().Y() < EPSILON && normal[n1].P().Y() > (-1.0) * EPSILON)
      {
           if( ShellPnts[n1].P().Y() > min( ShellPnts[n2].P().Y() , ShellPnts[n2 + 1].P().Y() ) + EPSILON &&
@@ -319,7 +329,7 @@ bool Dissection::interleave(int n1,int n2)
      return false;
 }
 
-bool Dissection::equal(double d1,double d2)
+bool Dissection::equal(Real d1,Real d2)
 {
      if(d1 - d2 > EPSILON || d1 - d2 < (-1.0) * EPSILON)
      return false;
@@ -328,15 +338,14 @@ bool Dissection::equal(double d1,double d2)
 
 bool Dissection::isRectangle(MyVertex &v1,MyVertex &v2,MyVertex &v3,MyVertex &v4)
 {
-     double k = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
-     double l1 = ( v2.P().Y() - v1.P().Y() ) * (v2.P().Y() - v1.P().Y()) + (v2.P().X() - v1.P().X()) * (v2.P().X() - v1.P().X());
-     double l2 = ( v4.P().Y() - v3.P().Y()) * (v4.P().Y() - v3.P().Y()) + (v4.P().X() - v3.P().X()) * (v4.P().X() - v3.P().X());
-
+     Real v1x = v1.P().X() , v1y = v1.P().Y() , v2x = v2.P().X() , v2y = v2.P().Y() ,
+          v3x = v3.P().X() , v3y = v3.P().Y() , v4x = v4.P().X() , v4y = v4.P().Y();
+     // Real k = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
+     Real l1 = sqrt( ( ( v2y - v1y ) * (v2y - v1y) + (v2x - v1x) * (v2x - v1x) ).toDouble() );
+     Real l2 = sqrt( ( ( v4y - v3y) * (v4y - v3y) + (v4x - v3x) * (v4x - v3x) ).toDouble() );
      if(l1 < l2 - EPSILON || l1 > l2 + EPSILON)
      return false;
-
-     double inner_conductor = (v2.P().X() - v1.P().X()) * (v4.P().X() - v1.P().X()) + (v2.P().Y() - v1.P().Y()) * (v4.P().Y() - v1.P().Y());
-
+     Real inner_conductor = Real(v2x - v3x) * Real(v4x - v3x) + Real(v2y - v3y) * Real(v4y - v3y);
      if(inner_conductor > EPSILON || inner_conductor < -EPSILON)
      return false;
 
@@ -371,13 +380,13 @@ bool Dissection::intersection(MyVertex &v1,MyVertex &v2,vector<MyVertex>& temp)
      return false;
 }
 
-double Dissection::parallel_distant(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
+Real Dissection::parallel_distant(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex v4)
 {
      if(v2.P().X() - v1.P().X() < EPSILON && v2.P().X() - v1.P().X() > (-1.0) * EPSILON)
      return v3.P().X() > v1.P().X() ? v3.P().X() - v1.P().X() : v1.P().X() - v3.P().X();
      if(v2.P().Y() - v1.P().Y() < EPSILON && v2.P().Y() - v1.P().Y() > (-1.0) * EPSILON)
      return v3.P().Y() > v1.P().Y() ? v3.P().Y() - v1.P().Y() : v1.P().Y() - v3.P().Y();
-     double k1,k2,x1,x2,y1,y2,x,y;
+     Real k1,k2,x1,x2,y1,y2,x,y;
      k2 = ( v2.P().Y() - v1.P().Y() ) / ( v2.P().X() - v1.P().X() );
      k1 = (-1.0) / k2;
      x1 = v2.P().X();
@@ -386,7 +395,7 @@ double Dissection::parallel_distant(MyVertex v1,MyVertex v2,MyVertex v3,MyVertex
      y2 = v3.P().Y();
      x = (k1 * x1 - y1 - k2 * x2 + y2) / ( k1 - k2 );
      y = k2 * x - k2 * x1 + y1;
-     return sqrt( (x - x1) * (x - x1) + (y - y1) * (y - y1) );
+     return sqrt( ( (x - x1) * (x - x1) + (y - y1) * (y - y1) ).toDouble() );
 }
 
 void Dissection::interpolate()
@@ -395,7 +404,7 @@ void Dissection::interpolate()
      std::vector<std::vector<MyVertex>> mark(normal.size());
      bool jud = false;
      int mark_j,cnt = 0;
-     double mn_distant,k;
+     Real mn_distant,k;
      for(int i = 0; i < normal.size();i ++)
      {
           jud = false;
@@ -438,8 +447,8 @@ void Dissection::interpolate()
 
 void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
 {
-     double k1,k2,x1,x2,y1,y2,x,y;
-     k1 = normal[n1].P().Y() / normal[n1].P().X();
+     Real k1,k2,x1,x2,y1,y2,x,y;
+     k1 = Real(normal[n1].P().Y()) / Real(normal[n1].P().X());
      k2 = (-1.0) / k1;
      bool jud;
      if(normal[n1].P().Y() < EPSILON && normal[n1].P().Y() > (-1.0) * EPSILON)
@@ -514,7 +523,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
           }
           return ;
      }
-     
+
      x1 = ShellPnts[n1 + 1].P().X();
      y1 = ShellPnts[n1 + 1].P().Y();
      x2 = ShellPnts[n2].P().X();
@@ -537,7 +546,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
           if(jud)
           {
                MyVertex now;
-               now.P() = vcg::Point3d::Construct<double> (x , y , 0.0);
+               now.P() = vcg::Point3d::Construct<double> (x.toDouble() , y.toDouble() , 0.0);
                
                mark[n2].push_back(now);
           }
@@ -548,6 +557,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
      y2 = ShellPnts[n2].P().Y();
      x = (k1 * x1 - y1 - k2 * x2 + y2) / (k1 - k2);
      y = k2 * x - k2 * x2 + y2;
+     
      if( ( x > min(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) + EPSILON && 
           x < max(ShellPnts[n2].P().X(),ShellPnts[n2 + 1].P().X()) - EPSILON ) ||
           ( y > min(ShellPnts[n2].P().Y(),ShellPnts[n2 + 1].P().Y()) + EPSILON &&
@@ -563,7 +573,7 @@ void Dissection::interbreak(int n1,int n2,vector<vector<MyVertex>>& mark)
           if(jud)
           {
                MyVertex now;
-               now.P() = vcg::Point3d::Construct<double> (x , y , 0.0);
+               now.P() = vcg::Point3d::Construct<double> (x.toDouble() , y.toDouble() , 0.0);
                
                mark[n2].push_back(now);
           }
@@ -585,7 +595,7 @@ void Dissection::rec_split()
      std::vector<MyVertex> temp,now;
      while(!tool.empty())
      {
-          double dist,min_dist;
+          Real dist,min_dist;
           int mark_i,mark_j;
           bool jud = false;
           temp.clear();  now.clear();
@@ -599,6 +609,8 @@ void Dissection::rec_split()
                {
                     if( oppo(temp[i],temp[i + 1],temp[j],temp[j + 1]) && isRectangle(temp[i],temp[i + 1],temp[j],temp[j + 1]) &&  !intersection(temp[i],temp[j + 1],temp) && !intersection(temp[i + 1],temp[j],temp) )
                     {
+
+
                          dist = parallel_distant(temp[i],temp[i + 1],temp[j],temp[j + 1]);
                          if(!jud)
                          {
@@ -653,7 +665,7 @@ void Dissection::rec_split()
 
           if(!jud)
           {
-               double k1,k2;
+               Real k1,k2;
                for(int i = 1;i < temp.size() - 1;i ++)
                {
                     k1 = ( temp[i].P().Y() - temp[i - 1].P().Y() ) / ( temp[i].P().X() - temp[i - 1].P().X() );
@@ -679,6 +691,7 @@ void Dissection::rec_split()
                }
                if(temp.size() > 3)
                {
+                    close(temp);
                     res.push_back(temp);
                     types.push_back(1);
                }
@@ -706,12 +719,12 @@ vector<vector<MyVertex>> Dissection::postprocess(vector<MyVertex>& raw)
                     np.P() = vcg::Point3d::Construct<double>( ShellPnts[j].P().X() , raw[(i + 2) % 4].P().Y() , 0.0 );
                     else
                     {
-                         double k = ( raw[(i + 1) % 4] - raw[i] ).P().Y() / ( raw[(i + 1) % 4] - raw[i] ).P().X();
-                         double b1 = ShellPnts[j].P().Y() + ShellPnts[j].P().X() / k;
-                         double b2 = raw[(i + 2) % 4].P().Y() - raw[(i + 2) % 4].P().X() * k;
-                         double x = k * (b2 - b1) / (k * k + 1);
-                         double y = k * x + b2;
-                         np.P() = vcg::Point3d::Construct<double>( x , y , 0.0 );
+                         Real k = ( raw[(i + 1) % 4] - raw[i] ).P().Y() / ( raw[(i + 1) % 4] - raw[i] ).P().X();
+                         Real b1 = ShellPnts[j].P().Y() + ShellPnts[j].P().X() / k;
+                         Real b2 = raw[(i + 2) % 4].P().Y() - raw[(i + 2) % 4].P().X() * k;
+                         Real x = k * (b2 - b1) / (k * k + 1);
+                         Real y = k * x + b2;
+                         np.P() = vcg::Point3d::Construct<double>( x.toDouble() , y.toDouble() , 0.0 );
                     }
 
                     temp.clear();
@@ -838,6 +851,8 @@ std::vector< std::vector<MyVertex> > Dissection::Result()
      return res;
      // Info();
      interpolate();
+     std::cout << "vn: " << ShellPnts.size() << " en: " << ShellPnts.size() << std::endl;
+     record(ShellPnts , "processing.ply");
      // Info();
      rec_split();
      record(res);

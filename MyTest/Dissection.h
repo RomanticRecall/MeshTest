@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-05-29 17:03:13
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-02 18:26:40
+ * @LastEditTime: 2023-06-05 19:50:17
  * @FilePath: \MeshTest\MyTest\Dissection.h
  * @Description: 
  * 
@@ -14,7 +14,7 @@
 #include "BasicType.h"
 #include "Function.h"
 
-#define EPSILON 0.0001
+#define EPSILON 0.001
 
 class Dissection
 {
@@ -31,12 +31,12 @@ class Dissection
         bool oppo(MyVertex p1,MyVertex p2,MyVertex p3,MyVertex p4);
         bool looseoppo(int n1,MyVertex p1,int n2,MyVertex p2);
         bool interleave(int n1,int n2);
-        bool equal(double r1,double r2);
+        bool equal(Real r1,Real r2);
         bool isRectangle(MyVertex &p1,MyVertex &p2,MyVertex &p3,MyVertex &p4);
         bool intersection(MyVertex &p1,MyVertex &p2,vector<MyVertex> &temp);
         void interbreak(int n1,int n2,vector<vector<MyVertex>>& mark);
-        double parallel_distant(int n1,int n2);
-        double parallel_distant(MyVertex p1,MyVertex p2,MyVertex p3,MyVertex p4);
+        Real parallel_distant(int n1,int n2);
+        Real parallel_distant(MyVertex p1,MyVertex p2,MyVertex p3,MyVertex p4);
         void interpolate();
         void close(vector<MyVertex>& temp);
         void rec_split();
