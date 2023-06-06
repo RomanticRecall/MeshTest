@@ -219,6 +219,11 @@ template <class T> class Coord3d: public Coord<vcg::Point3d, T> {
 public: static void Name(std::vector<std::string> & name){name.push_back(std::string("Coord3d"));T::Name(name);}
 };
 
+/// Specialized Coord Component in Real point precision.
+template <class T> class Coord3r: public Coord<vcg::Point3r, T> {
+public: static void Name(std::vector<std::string> & name){name.push_back(std::string("Coord3r"));T::Name(name);}
+};
+
 /*-------------------------- NORMAL ----------------------------------------*/
   /*! \brief \em Generic Component: \b %Normal of the vertex
 

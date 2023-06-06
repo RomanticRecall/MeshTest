@@ -61,7 +61,8 @@ public:
     Real(Real &&) noexcept;           // 移动构造
     Real operator=(const Real &);     // 赋值函数
     Real operator=(Real &&) noexcept; // 移动赋值
-    // operator double(){    return 0.0;    }
+    // operator double(){ string s = ""; for(int i = 0;i < integer.size();i ++) s += integer[i]; 
+    //                     if(decimal.size() > 0) s += '.'; for(int i = 0;i < decimal.size();i ++) s += decimal[i]; }
 
     Real abs() const;      // 取绝对值
     Real pow(int n) const; // 幂运算
@@ -107,7 +108,7 @@ public:
 #define WFLOAT_TEN Real::TEN()
 
 private:
-    inline static int ACCURACY{30}; // 除法精度
+    inline static int ACCURACY{50}; // 除法精度
     vector<char> integer;            // 整数部分
     vector<char> decimal;            // 小数部分
     void trim();                     // 将多余的零删去

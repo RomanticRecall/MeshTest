@@ -97,6 +97,7 @@ Edited doxygen comments
 #include <assert.h>
 #include <algorithm>
 #include <vcg/math/base.h>
+#include <Real.hpp>
 
 namespace vcg {
 
@@ -647,6 +648,7 @@ typedef Point3<short>  Point3s;
 typedef Point3<int>	   Point3i;
 typedef Point3<float>  Point3f;
 typedef Point3<double> Point3d;
+typedef Point3<Real>   Point3r;
 
 /*@}*/
 
