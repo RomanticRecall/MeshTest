@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-07 16:52:42
+ * @LastEditTime: 2023-06-07 22:04:04
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -13,6 +13,7 @@
 #include "Dissection.h"
 #include "Shape.h"
 #include "RecMesh.h"
+#include "TriMesh.h"
 #include "Convertcases.h"
 #include "Function.h"
 #include "MyMethod.h"
@@ -37,19 +38,22 @@ void MergeAndWriteMesh(std::vector<Shape> domain , string s)
             pnts.clear();
             edges.clear();
             recmesh.Result(pnts , edges);
-            // for(int j = 0;j < edges.size();j ++)
-            // {
-            //     std::cout << std::endl;
-            //     std::cout << "edge " << j << std::endl;
-            //     pnts[edges[j][0]].Info();
-            //     pnts[edges[j][1]].Info();
-            //     std::cout << std::endl;
-            // }
         }
         else
         {
             pnts.clear();
             edges.clear();
+
+            // ////////////////////////////////
+            // TriMesh trimesh(domain[i]);
+            // trimesh.Result(pnts,edges);
+
+            // break;
+
+            // pnts.clear();
+            // edges.clear();
+            // ////////////////////////////////
+
             pnts = domain[i].GetVertices();
             pnts.erase( pnts.begin() + pnts.size() - 1 );
             vector<int> temp;
