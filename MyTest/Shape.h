@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-06-05 16:01:17
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-06 21:05:19
+ * @LastEditTime: 2023-06-07 14:25:35
  * @FilePath: \MeshTest\MyTest\Shape.h
  * @Description: 
  * 
@@ -21,12 +21,14 @@ class Shape
     ~Shape();
     void Info();
     void AdjInfo();
+    std::vector<std::vector<Point>> GetEdges();
     std::vector<Point> GetVertices();
     bool AddAdjs(Shape * adjshape);
-    void interpolation(vector<Point> edge,Real sz);
-    void interpolation(vector<Point> edge,int sn);
-    void Steiner(Real sz);
+    void interpolation(vector<Point> &edge,Real sz);
+    void interpolation(vector<Point> &edge,int sn);
+    void Steiner(double sz);
     void Steiner(int sn);
+    bool Type();
     protected:
     private:
     bool type;

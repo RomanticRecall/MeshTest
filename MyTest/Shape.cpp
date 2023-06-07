@@ -33,6 +33,11 @@ void Shape::AdjInfo()
     cout << "adjcent to " << cnt << " shapes" << std::endl << std::endl;
 }
 
+std::vector<std::vector<Point>> Shape::GetEdges()
+{
+    return Edges;
+}
+
 std::vector<Point> Shape::GetVertices()
 {
     return ShellPnts;
@@ -73,28 +78,35 @@ bool Shape::AddAdjs(Shape * adjshape)
     return tes;
 }
 
-void Shape::interpolation(vector<Point> edge,Real sz)
+void Shape::interpolation(vector<Point> &edge,Real sz)
 {
     Point p1 = edge[0] , p2 = edge[1];
     Point d = p1 - p2;
     Real distance = sqrt( ( (p1 - p2) * (p1 - p2) ).toDouble() );
+    if(sz == 0.000000) return ;
     int sn = (int)(distance / sz).toDouble();
+    if(sn == 0) return ;
     for(int i = 1;i < sn;i ++)
-    edge.insert( edge.begin() + 1 , p2 + d / Real(sn));
+    edge.insert( edge.begin() + 1 , p2 + ( d / Real(sn) ) * (double)i );
 }
 
-void Shape::interpolation(vector<Point> edge,int sn)
+void Shape::interpolation(vector<Point> &edge,int sn)
 {
 
 }
 
-void Shape::Steiner(Real sz)
+void Shape::Steiner(double sz)
 {
     for(int i = 0;i < Edges.size();i ++)
-    interpolation(Edges[i] , sz);
+    interpolation(Edges[i] , Real(sz));
 }
 
 void Shape::Steiner(int sn)
 {
 
+}
+
+bool Shape::Type()
+{
+    return type;
 }
