@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-07 22:04:04
+ * @LastEditTime: 2023-06-08 10:28:39
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -43,31 +43,8 @@ void MergeAndWriteMesh(std::vector<Shape> domain , string s)
         {
             pnts.clear();
             edges.clear();
-
-            // ////////////////////////////////
-            // TriMesh trimesh(domain[i]);
-            // trimesh.Result(pnts,edges);
-
-            // break;
-
-            // pnts.clear();
-            // edges.clear();
-            // ////////////////////////////////
-
-            pnts = domain[i].GetVertices();
-            pnts.erase( pnts.begin() + pnts.size() - 1 );
-            vector<int> temp;
-            for(int j = 0;j < pnts.size() - 1;j ++)
-            {
-                temp.clear();
-                temp.push_back(j);
-                temp.push_back(j + 1);
-                edges.push_back(temp);
-            }
-            temp.clear();
-            temp.push_back(pnts.size() - 1);
-            temp.push_back(0);
-            edges.push_back(temp);
+            TriMesh trimesh(domain[i] , 100.0);
+            trimesh.Result(pnts,edges);
         }
 
         vcg::tri::Allocator<MyMesh>::AddVertices(mesh, pnts.size());

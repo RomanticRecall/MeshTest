@@ -9,9 +9,9 @@ class TriMesh
 {
     public:
     TriMesh();
-    TriMesh(Shape &sp);
+    TriMesh(Shape &sp , double sz);
     ~TriMesh();
-    void Construct(vector<Point> &sp);
+    void Construct(vector<Point> &sp , double sz);
     void Result(vector<Point> &pnts , vector<vector<int>> &edges);
     protected:
     private:
