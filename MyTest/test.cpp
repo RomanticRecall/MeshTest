@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-08 10:28:39
+ * @LastEditTime: 2023-07-12 20:26:27
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -29,7 +29,7 @@ void MergeAndWriteMesh(std::vector<Shape> domain , string s)
 
     for(int i = 0;i < domain.size();i ++)
     {
-        domain[i].Steiner(100.0);
+        domain[i].Steiner(500.0);
 
         if(!domain[i].Type())
         {
@@ -43,7 +43,7 @@ void MergeAndWriteMesh(std::vector<Shape> domain , string s)
         {
             pnts.clear();
             edges.clear();
-            TriMesh trimesh(domain[i] , 100.0);
+            TriMesh trimesh(domain[i]);
             trimesh.Result(pnts,edges);
         }
 

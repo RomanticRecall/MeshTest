@@ -82,7 +82,7 @@ void Shape::interpolation(vector<Point> &edge,Real sz)
 {
     Point p1 = edge[0] , p2 = edge[1];
     Point d = p1 - p2;
-    Real distance = sqrt( ( (p1 - p2) * (p1 - p2) ).toDouble() );
+    Real distance = sqrt( ( d * d ).toDouble() );
     if(sz == 0.000000) return ;
     int sn = (int)(distance / sz).toDouble();
     if(sn == 0) return ;

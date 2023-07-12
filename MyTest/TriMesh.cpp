@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-06-07 18:04:19
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-06-08 11:31:36
+ * @LastEditTime: 2023-07-12 20:03:17
  * @FilePath: \MeshTest\MyTest\TriMesh.cpp
  * @Description: 
  * 
@@ -12,7 +12,7 @@
 
 TriMesh::TriMesh(){}
 
-TriMesh::TriMesh(Shape &sp , double sz)
+TriMesh::TriMesh(Shape &sp)
 {
     vector<Point> temp;
     temp.clear();
@@ -21,15 +21,14 @@ TriMesh::TriMesh(Shape &sp , double sz)
         for(int j = 0;j < sp.GetEdges()[i].size() - 1;j ++)
         temp.push_back(sp.GetEdges()[i][j]);
     }
-    Construct(temp , sz);
+    temp.push_back(sp.GetEdges()[0][0]);
+    Construct(temp);
 }
 
 TriMesh::~TriMesh(){}
 
-void TriMesh::Construct(vector<Point> &sp , double sz)
+void TriMesh::Construct(vector<Point> &sp)
 {
-    sp.erase(sp.begin() + sp.size() - 1);
-
     input.numberofpoints = sp.size();
     input.pointlist = (double *)malloc(2 * input.numberofpoints * sizeof(double));
     for(int i = 0;i < sp.size();i ++)
