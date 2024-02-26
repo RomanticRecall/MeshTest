@@ -2,7 +2,7 @@
  * @Author: Master 251871605@qq.com
  * @Date: 2023-04-20 16:31:57
  * @LastEditors: Master 251871605@qq.com
- * @LastEditTime: 2023-07-12 20:26:27
+ * @LastEditTime: 2023-07-18 10:44:52
  * @FilePath: \MeshTest\MyTest\test.cpp
  * @Description: 
  * 
@@ -29,7 +29,7 @@ void MergeAndWriteMesh(std::vector<Shape> domain , string s)
 
     for(int i = 0;i < domain.size();i ++)
     {
-        domain[i].Steiner(500.0);
+        domain[i].Steiner(-1.0);
 
         if(!domain[i].Type())
         {
@@ -87,7 +87,7 @@ int main()
     vector<Point> input;
     vector<vector<Point>> raw_domain;
     Convertcases cvtcs;
-    string s = "../source/txt_source/Mesh_Geom_Path.txt";
+    string s = "../source/txt_source/Mesh_decimal_1.txt";
     cvtcs.read( input , s );
     Dissection disc( input , s );
     raw_domain = disc.Result();

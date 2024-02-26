@@ -97,6 +97,7 @@ void Shape::interpolation(vector<Point> &edge,int sn)
 
 void Shape::Steiner(double sz)
 {
+    if(sz > 0.000000)
     for(int i = 0;i < Edges.size();i ++)
     interpolation(Edges[i] , Real(sz));
 }
